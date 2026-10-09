@@ -12,6 +12,9 @@ export const CHART_COMPONENTS = [
 
 export type ChartComponentName = (typeof CHART_COMPONENTS)[number]
 
+export const getDocsUrl = (name: ChartComponentName) =>
+  `https://react-chartjs-2.js.org/components/${name.replace(/(?<!^)([A-Z])/g, '-$1').toLowerCase()}`
+
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
 const colors = ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange']
 

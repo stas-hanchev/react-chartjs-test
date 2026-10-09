@@ -4,6 +4,7 @@ import {
   Button,
   FormControl,
   InputLabel,
+  Link,
   MenuItem,
   Paper,
   Select,
@@ -12,6 +13,7 @@ import {
 } from '@mui/material'
 import {
   CHART_COMPONENTS,
+  getDocsUrl,
   getPresetJson,
   type ChartComponentName,
 } from './chartPresets'
@@ -82,11 +84,11 @@ function App() {
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <FormControl fullWidth>
-          <InputLabel id="chart-component-label">Компонент</InputLabel>
+          <InputLabel id="chart-component-label">Component</InputLabel>
           <Select
             labelId="chart-component-label"
             value={component}
-            label="Компонент"
+            label="Component"
             onChange={handleChange}
           >
             {CHART_COMPONENTS.map((name) => (
@@ -96,6 +98,10 @@ function App() {
             ))}
           </Select>
         </FormControl>
+
+        <Link href={getDocsUrl(component)} target="_blank" rel="noopener noreferrer">
+          {component} documentation ↗
+        </Link>
 
         <TextField
           label="JSON"
