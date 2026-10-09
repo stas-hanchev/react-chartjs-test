@@ -48,13 +48,18 @@ function App() {
   const [applied, setApplied] = useState<AppliedChart>(() => presetChart('Line'))
   const [error, setError] = useState<string | null>(null)
 
-  const handleChange = (event: SelectChangeEvent<ChartComponentName>) => {
-    const name = event.target.value as ChartComponentName
+  const loadPreset = (name: ChartComponentName) => {
     setComponent(name)
     setJson(getPresetJson(name))
     setApplied(presetChart(name))
     setError(null)
   }
+
+  const handleChange = (event: SelectChangeEvent<ChartComponentName>) => {
+    loadPreset(event.target.value as ChartComponentName)
+  }
+
+  const handleReset = () => loadPreset(component)
 
   const handleApply = () => {
     try {
@@ -107,9 +112,14 @@ function App() {
           }}
         />
 
-        <Button variant="contained" onClick={handleApply}>
-          Apply
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button variant="contained" onClick={handleApply} sx={{ flex: 1 }}>
+            Apply
+          </Button>
+          <Button variant="outlined" onClick={handleReset} sx={{ flex: 1 }}>
+            Reset
+          </Button>
+        </Box>
       </Box>
 
       <Paper sx={{ p: 2 }}>
