@@ -39,6 +39,16 @@ const parseConfig = (component: ChartComponentName, json: string): ChartConfig =
   return config as ChartConfig
 }
 
+type ValidationResult = { config: ChartConfig; error: null } | { config: null; error: string }
+
+const validateConfig = (component: ChartComponentName, json: string): ValidationResult => {
+  try {
+    return { config: parseConfig(component, json), error: null }
+  } catch (e) {
+    return { config: null, error: e instanceof Error ? e.message : String(e) }
+  }
+}
+
 const presetChart = (component: ChartComponentName): AppliedChart => ({
   component,
   config: parseConfig(component, getPresetJson(component)),
@@ -48,13 +58,13 @@ function App() {
   const [component, setComponent] = useState<ChartComponentName>('Line')
   const [json, setJson] = useState(() => getPresetJson('Line'))
   const [applied, setApplied] = useState<AppliedChart>(() => presetChart('Line'))
-  const [error, setError] = useState<string | null>(null)
+  
+  const { config, error } = validateConfig(component, json)
 
   const loadPreset = (name: ChartComponentName) => {
     setComponent(name)
     setJson(getPresetJson(name))
     setApplied(presetChart(name))
-    setError(null)
   }
 
   const handleChange = (event: SelectChangeEvent<ChartComponentName>) => {
@@ -64,12 +74,11 @@ function App() {
   const handleReset = () => loadPreset(component)
 
   const handleApply = () => {
-    try {
-      setApplied({ component, config: parseConfig(component, json) })
-      setError(null)
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
-    }
+    if (config) setApplied({ component, config })
+  }
+
+  const handleFormat = () => {
+    if (config) setJson(JSON.stringify(config, null, 2))
   }
 
   return (
@@ -119,8 +128,11 @@ function App() {
         />
 
         <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button variant="contained" onClick={handleApply} sx={{ flex: 1 }}>
+          <Button variant="contained" onClick={handleApply} disabled={!config} sx={{ flex: 1 }}>
             Apply
+          </Button>
+          <Button variant="outlined" onClick={handleFormat} disabled={!config} sx={{ flex: 1 }}>
+            Format
           </Button>
           <Button variant="outlined" onClick={handleReset} sx={{ flex: 1 }}>
             Reset
